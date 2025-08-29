@@ -151,6 +151,58 @@
         .star:not(.favorited) {
             color: #d1d5db;
         }
+        /* Fullscreen overlay for embedded document */
+        #docOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ffffff;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        #docTopBar {
+            background-color: #1e3a8a; /* navy-blue */
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        .topbar-button:hover {
+            background: rgba(255,255,255,0.18);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+        .topbar-button:active {
+            transform: translateY(0);
+        }
+        #docFrame {
+            width: 100%;
+            height: calc(100vh - 56px);
+            border: 0;
+            flex: 1 1 auto;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -190,6 +242,25 @@
             <p>&copy; 2025 Acervo de Termos LAMIC. Todos os direitos reservados.</p>
         </div>
     </footer>
+
+    <!-- Fullscreen Embedded Document Overlay -->
+    <div id="docOverlay">
+        <div id="docTopBar">
+            <div class="topbar-left">
+                <button id="btnBack" class="topbar-button" onclick="closeDoc()" aria-label="Voltar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Voltar</span>
+                </button>
+                <button id="btnEdit" class="topbar-button" onclick="switchToEditMode()" aria-label="Editar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <span>Editar</span>
+                </button>
+            </div>
+            <div class="text-sm opacity-80" id="docTitle"></div>
+            <div style="width: 96px;"></div>
+        </div>
+        <iframe id="docFrame" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write; fullscreen"></iframe>
+    </div>
 
     <script type="text/javascript">
         var gk_isXlsx = false;
@@ -284,7 +355,7 @@
                 <span class="star ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${index})">&#9733;</span>
                 <h2 class="text-lg font-semibold text-blue-900">${sheet.title}</h2>
                 <p class="text-gray-600">Termo: ${sheet.sector}</p>
-                <a href="${sheet.link}" target="_blank" class="mt-4 modern-button">Acessar Termo</a>
+                <a href="#" onclick="openDoc(${index}); return false;" class="mt-4 modern-button">Acessar Termo</a>
                 ${formHtml}
             `;
             spreadsheetList.appendChild(card);
@@ -345,6 +416,65 @@
 
         // Initialize
         updateCards();
+
+        // ===== Embedded Doc Viewer Logic =====
+        let currentDocIndex = null;
+
+        function extractDocIdFromUrl(url) {
+            try {
+                var match = url.match(/\/document\/d\/([^\/#?]+)/);
+                return match ? match[1] : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function buildViewUrl(docId) {
+            // Preview mode is nicer for read-only embedding
+            return `https://docs.google.com/document/d/${docId}/preview`;
+        }
+
+        function buildEditUrl(docId) {
+            // Attempt embedded edit (may be blocked by Google in some environments)
+            return `https://docs.google.com/document/d/${docId}/edit?rm=embedded`;
+        }
+
+        function openDoc(index, mode) {
+            currentDocIndex = index;
+            const sheet = spreadsheets[index];
+            const docId = extractDocIdFromUrl(sheet.link);
+            const iframe = document.getElementById('docFrame');
+            const titleEl = document.getElementById('docTitle');
+            titleEl.textContent = sheet.title || '';
+            if (docId) {
+                iframe.src = mode === 'edit' ? buildEditUrl(docId) : buildViewUrl(docId);
+            } else {
+                // Fallback: use original link
+                iframe.src = sheet.link;
+            }
+            document.getElementById('docOverlay').style.display = 'flex';
+        }
+
+        function closeDoc() {
+            const overlay = document.getElementById('docOverlay');
+            const iframe = document.getElementById('docFrame');
+            overlay.style.display = 'none';
+            // Clear src to stop the doc from continuing to load/play
+            iframe.src = '';
+            currentDocIndex = null;
+        }
+
+        function switchToEditMode() {
+            if (currentDocIndex == null) return;
+            const sheet = spreadsheets[currentDocIndex];
+            const docId = extractDocIdFromUrl(sheet.link);
+            const iframe = document.getElementById('docFrame');
+            if (docId) {
+                iframe.src = buildEditUrl(docId);
+            } else {
+                iframe.src = sheet.link;
+            }
+        }
     </script>
 </body>
 </html>
