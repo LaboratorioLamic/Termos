@@ -19,12 +19,12 @@
         .card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
-            z-index: 1; /* Lower z-index for cards */
+            z-index: 1;
         }
         .card:hover {
             transform: translateY(-5px) scale(1.02);
             box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
-            z-index: 2; /* Slightly higher on hover, but still below dropdowns */
+            z-index: 2;
         }
         .search-bar {
             max-width: 600px;
@@ -38,9 +38,9 @@
             background-color: #ffffff;
             min-width: 160px;
             box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
-            z-index: 10; /* Sector dropdown above cards */
-            max-height: 200px; /* Approximate height for 5 items */
-            overflow-y: auto; /* Enable scrollbar for overflow */
+            z-index: 10;
+            max-height: 200px;
+            overflow-y: auto;
         }
         .dropdown:hover .dropdown-content {
             display: block;
@@ -54,12 +54,12 @@
             background-color: #ffffff;
             min-width: 200px;
             box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
-            z-index: 30; /* Higher z-index to ensure form dropdown is above all cards */
-            top: 100%; /* Position below the button */
+            z-index: 30;
+            top: 100%;
             left: 0;
-            padding-top: 4px; /* Small padding to prevent clipping */
-            max-height: 200px; /* Approximate height for 5 items */
-            overflow-y: auto; /* Enable scrollbar for overflow */
+            padding-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
         }
         .form-dropdown:hover .form-dropdown-content {
             display: block;
@@ -151,7 +151,6 @@
         .star:not(.favorited) {
             color: #d1d5db;
         }
-        /* Fullscreen overlay for embedded document */
         #docOverlay {
             position: fixed;
             top: 0;
@@ -164,7 +163,7 @@
             flex-direction: column;
         }
         #docTopBar {
-            background-color: #1e3a8a; /* navy-blue */
+            background-color: #1e3a8a;
             color: #ffffff;
             display: flex;
             align-items: center;
@@ -226,14 +225,12 @@
                 </button>
                 <div id="sectorDropdown" class="dropdown-content rounded-lg">
                     <a href="#" class="block px-4 py-2 bg-blue-100 hover:bg-blue-200" onclick="filterBySector('')">Todos</a>
-                    <!-- Termos serão adicionados dinamicamente aqui -->
                 </div>
             </div>
             <button id="favoriteFilter" class="p-3 favorite-button" onclick="filterByFavorites()">Favoritos</button>
         </div>
 
         <div id="spreadsheetList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Cards serão adicionados dinamicamente aqui -->
         </div>
     </main>
 
@@ -243,7 +240,6 @@
         </div>
     </footer>
 
-    <!-- Fullscreen Embedded Document Overlay -->
     <div id="docOverlay">
         <div id="docTopBar">
             <div class="topbar-left">
@@ -298,100 +294,101 @@
             return gk_fileData[filename] || "";
         }
 
-        let spreadsheets = [
-            { title: "TERMO DE CIENCIA CARIOTIPO DE ABORTO", sector: "Ciencia", link: "https://docs.google.com/document/d/1Zo-9ZHvDuFI41cHprcKmA7x8GjMrqYHX/edit?rtpof=true&tab=t.0", forms: [] },
-            { title: "TERMO DE CONSENTIMENTO INFORMADO", sector: "Consentimento", link: "https://docs.google.com/document/d/1ZsYpNyM3bzUF4hQhbB2ShARUWoFO2_PJ/edit?usp=drive_link&ouid=111780347480586113555&rtpof=true&sd=true", forms: [] },
-            { title: "TERMO DE CONSENTIMENTO LIVRE E ESCLARECIDO PARA ESTIMULO DE GH APOS CLONIDINA.", sector: "Consentimento", link: "https://docs.google.com/document/d/1Z_fncHc-HVtU-EgP-HNwjZPrtyM3MCFJ/edit?usp=drive_link&ouid=111780347480586113555&rtpof=true&sd=true", forms: [] },
-            { title: "TERMO DE DECLARAÇÃO DE RESPONSABILIDADE", sector: "Responsabilidade", link: "https://docs.google.com/document/d/1JdjWKoXKU1VzRbKJBemqH1EbjzOGsTvu/edit?usp=drive_link&ouid=111780347480586113555&rtpof=true&sd=true", forms: [] },
-            { title: "TERMO DE DEVOLUÇÃO DE MATERIAL", sector: "Ciencia", link: "https://docs.google.com/document/d/1USt6reDgP980VdWe_vRcVqWJoZuEXJ9O/edit?usp=drive_link&ouid=111780347480586113555&rtpof=true&sd=true", forms: [] },
-            { title: "TERMO DE RESPONSABILIDADE PARA LIBERAÇÃO - HIV", sector: "Responsabilidade", link: "https://docs.google.com/document/d/1mUt7IRzl6T8WVDYl8cmpTjFiZuHt4AWt/edit?usp=drive_link&ouid=111780347480586113555&rtpof=true&sd=true", forms: [] },
-            { title: "TERMO DE REALIZAÇÃO DE EXAMES PARTICULARES SEM COBERTURA PELO PLANO", sector: "Ciencia", link: "https://docs.google.com/document/d/1ZQM-DeGMI5cHQj_V0z6mdsBGW6-dJymq/edit?usp=drive_link&ouid=111780347480586113555&rtpof=true&sd=true", forms: [] },
-            { title: "RECIBO SIMPLES", sector: "Ciencia", link: "https://docs.google.com/document/d/1jkqyYsCUAIJz9M_ucXRhwKiOGWksFaHA/edit?usp=drive_link&ouid=111780347480586113555&rtpof=true&sd=true", forms: [] },
-            { title: "TIMBRADO - MODELO", sector: "Modelo", link: "https://docs.google.com/document/d/1Khj0Irz_lVLFL-9agVlvaArZtHmgCGNl/edit?usp=drive_link&ouid=111780347480586113555&rtpof=true&sd=true", forms: [] },
-          
-        ];
-
-        // Initialize favorites from localStorage with site-specific key and migration
         const FAVORITES_KEY = 'lamic_termos_favorites_v1';
-        const OLD_FAVORITES_KEYS = ['favorites'];
-        function loadFavorites() {
-            try {
-                var fromNew = JSON.parse(localStorage.getItem(FAVORITES_KEY));
-                if (Array.isArray(fromNew)) return fromNew;
-            } catch (e) {}
-            for (var i = 0; i < OLD_FAVORITES_KEYS.length; i++) {
-                try {
-                    var raw = localStorage.getItem(OLD_FAVORITES_KEYS[i]);
-                    if (raw != null) {
-                        var parsed = JSON.parse(raw);
-                        if (Array.isArray(parsed)) {
-                            localStorage.setItem(FAVORITES_KEY, JSON.stringify(parsed));
-                            return parsed;
-                        }
-                    }
-                } catch (e) {}
-            }
-            localStorage.setItem(FAVORITES_KEY, JSON.stringify([]));
-            return [];
-        }
-        let favorites = loadFavorites();
+        let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
         let selectedSector = '';
         let showFavorites = false;
+        let spreadsheets = [];
 
-        // Sort spreadsheets by sector then by title
-        spreadsheets.sort((a, b) => {
-            if (a.sector < b.sector) return -1;
-            if (a.sector > b.sector) return 1;
-            if (a.title < b.title) return -1;
-            if (a.title > b.title) return 1;
-            return 0;
-        });
-
-        // Populate sector dropdown
-        const uniqueSectors = [...new Set(spreadsheets.map(sheet => sheet.sector))].sort();
-        const sectorDropdown = document.getElementById('sectorDropdown');
-        sectorDropdown.innerHTML = `<a href="#" class="block px-4 py-2 bg-blue-100 hover:bg-blue-200" onclick="filterBySector('')">Todos</a>`;
-        uniqueSectors.forEach(sector => {
-            const a = document.createElement('a');
-            a.href = '#';
-            a.className = 'block px-4 py-2 hover:bg-gray-100';
-            a.textContent = sector;
-            a.onclick = () => filterBySector(sector);
-            sectorDropdown.appendChild(a);
-        });
-
-        // Render cards
-        const spreadsheetList = document.getElementById('spreadsheetList');
-        spreadsheets.forEach((sheet, index) => {
-            const card = document.createElement('div');
-            card.className = 'card bg-white p-6 rounded-lg shadow-md';
-            card.dataset.sector = sheet.sector;
-            card.dataset.index = index;
-            const isFavorited = favorites.includes(index);
-            let formHtml = '';
-            if (sheet.forms && sheet.forms.length > 0) {
-                if (sheet.forms.length === 1) {
-                    formHtml = `<a href="${sheet.forms[0].link}" target="_blank" class="mt-4 form-button ml-4">Acessar Formulário</a>`;
-                } else {
-                    formHtml = `<div class="form-dropdown inline-block ml-4">
-                        <a href="#" class="mt-4 form-button">Acessar Formulário</a>
-                        <div class="form-dropdown-content rounded-lg">
-                            ${sheet.forms.map(form => `<a href="${form.link}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">${form.title}</a>`).join('')}
-                        </div>
-                    </div>`;
-                }
+        // Fetch data from JSONBin
+        async function fetchSpreadsheets() {
+            try {
+                const response = await fetch('https://api.jsonbin.io/v3/b/68dbbb5b43b1c97be95554e6', {
+                    headers: {
+                        'X-Master-Key': '$2a$10$2elKW8TT6o.K3V176efqwu7kOfD1PnS3D/F0s4Tczc3MYmaU.N1bi'
+                    }
+                });
+                const data = await response.json();
+                spreadsheets = data.record;
+                initializeApp();
+            } catch (error) {
+                console.error('Error fetching data from JSONBin:', error);
+                spreadsheets = [];
+                initializeApp();
             }
-            card.innerHTML = `
-                <span class="star ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${index})">&#9733;</span>
-                <h2 class="text-lg font-semibold text-blue-900">${sheet.title}</h2>
-                <p class="text-gray-600">Termo: ${sheet.sector}</p>
-                <a href="#" onclick="openDoc(${index}); return false;" class="mt-4 modern-button">Acessar Termo</a>
-                ${formHtml}
-            `;
-            spreadsheetList.appendChild(card);
-        });
+        }
 
-        // Toggle favorite status
+        function initializeApp() {
+            // Sort spreadsheets by sector then by title
+            spreadsheets.sort((a, b) => {
+                if (a.sector < b.sector) return -1;
+                if (a.sector > b.sector) return 1;
+                if (a.title < b.title) return -1;
+                if (a.title > b.title) return 1;
+                return 0;
+            });
+
+            // Populate sector dropdown
+            const uniqueSectors = [...new Set(spreadsheets.map(sheet => sheet.sector))].sort();
+            const sectorDropdown = document.getElementById('sectorDropdown');
+            sectorDropdown.innerHTML = `<a href="#" class="block px-4 py-2 bg-blue-100 hover:bg-blue-200" onclick="filterBySector('')">Todos</a>`;
+            uniqueSectors.forEach(sector => {
+                const a = document.createElement('a');
+                a.href = '#';
+                a.className = 'block px-4 py-2 hover:bg-gray-100';
+                a.textContent = sector;
+                a.onclick = () => filterBySector(sector);
+                sectorDropdown.appendChild(a);
+            });
+
+            // Render cards
+            const spreadsheetList = document.getElementById('spreadsheetList');
+            spreadsheetList.innerHTML = '';
+            spreadsheets.forEach((sheet, index) => {
+                const card = document.createElement('div');
+                card.className = 'card bg-white p-6 rounded-lg shadow-md';
+                card.dataset.sector = sheet.sector;
+                card.dataset.index = index;
+                const isFavorited = favorites.includes(index);
+                let formHtml = '';
+                if (sheet.forms && sheet.forms.length > 0) {
+                    if (sheet.forms.length === 1) {
+                        formHtml = `<a href="${sheet.forms[0].link}" target="_blank" class="mt-4 form-button ml-4">Acessar Formulário</a>`;
+                    } else {
+                        formHtml = `<div class="form-dropdown inline-block ml-4">
+                            <a href="#" class="mt-4 form-button">Acessar Formulário</a>
+                            <div class="form-dropdown-content rounded-lg">
+                                ${sheet.forms.map(form => `<a href="${form.link}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">${form.title}</a>`).join('')}
+                            </div>
+                        </div>`;
+                    }
+                }
+                let linkHtml = '';
+                if (sheet.links && sheet.links.length > 0) {
+                    if (sheet.links.length === 1 && !sheet.links[0].title) {
+                        linkHtml = `<a href="#" onclick="openDoc(${index}, 0); return false;" class="mt-4 modern-button">Acessar Termo</a>`;
+                    } else {
+                        linkHtml = `<div class="dropdown inline-block">
+                            <a href="#" class="mt-4 modern-button">Acessar Termo</a>
+                            <div class="dropdown-content rounded-lg">
+                                ${sheet.links.map((link, linkIndex) => `<a href="#" onclick="openDoc(${index}, ${linkIndex}); return false;" class="block px-4 py-2 hover:bg-gray-100">${link.title || 'Documento ' + (linkIndex + 1)}</a>`).join('')}
+                            </div>
+                        </div>`;
+                    }
+                }
+                card.innerHTML = `
+                    <span class="star ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${index})">&#9733;</span>
+                    <h2 class="text-lg font-semibold text-blue-900">${sheet.title}</h2>
+                    <p class="text-gray-600">Termo: ${sheet.sector}</p>
+                    ${linkHtml}
+                    ${formHtml}
+                `;
+                spreadsheetList.appendChild(card);
+            });
+
+            updateCards();
+        }
+
         function toggleFavorite(index) {
             if (favorites.includes(index)) {
                 favorites = favorites.filter(fav => fav !== index);
@@ -402,7 +399,6 @@
             updateCards();
         }
 
-        // Update card display based on filters
         function updateCards() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const cards = document.getElementsByClassName('card');
@@ -421,11 +417,9 @@
             });
         }
 
-        // Search input handler
         const searchInput = document.getElementById('searchInput');
         searchInput.addEventListener('input', updateCards);
 
-        // Sector filter handler
         function filterBySector(sector) {
             selectedSector = sector;
             showFavorites = false;
@@ -434,7 +428,6 @@
             updateCards();
         }
 
-        // Favorites filter handler
         function filterByFavorites() {
             showFavorites = !showFavorites;
             selectedSector = '';
@@ -444,11 +437,8 @@
             updateCards();
         }
 
-        // Initialize
-        updateCards();
-
-        // ===== Embedded Doc Viewer Logic =====
         let currentDocIndex = null;
+        let currentLinkIndex = null;
 
         function extractDocIdFromUrl(url) {
             try {
@@ -460,27 +450,26 @@
         }
 
         function buildViewUrl(docId) {
-            // Preview mode is nicer for read-only embedding
             return `https://docs.google.com/document/d/${docId}/preview`;
         }
 
         function buildEditUrl(docId) {
-            // Attempt embedded edit (may be blocked by Google in some environments)
             return `https://docs.google.com/document/d/${docId}/edit?rm=embedded`;
         }
 
-        function openDoc(index, mode) {
+        function openDoc(index, linkIndex) {
             currentDocIndex = index;
+            currentLinkIndex = linkIndex;
             const sheet = spreadsheets[index];
-            const docId = extractDocIdFromUrl(sheet.link);
+            const link = sheet.links[linkIndex];
+            const docId = extractDocIdFromUrl(link.link);
             const iframe = document.getElementById('docFrame');
             const titleEl = document.getElementById('docTitle');
-            titleEl.textContent = sheet.title || '';
+            titleEl.textContent = link.title || sheet.title || '';
             if (docId) {
-                iframe.src = mode === 'edit' ? buildEditUrl(docId) : buildViewUrl(docId);
+                iframe.src = buildViewUrl(docId);
             } else {
-                // Fallback: use original link
-                iframe.src = sheet.link;
+                iframe.src = link.link;
             }
             document.getElementById('docOverlay').style.display = 'flex';
         }
@@ -489,33 +478,38 @@
             const overlay = document.getElementById('docOverlay');
             const iframe = document.getElementById('docFrame');
             overlay.style.display = 'none';
-            // Clear src to stop the doc from continuing to load/play
             iframe.src = '';
             currentDocIndex = null;
+            currentLinkIndex = null;
         }
 
         function switchToEditMode() {
-            if (currentDocIndex == null) return;
+            if (currentDocIndex == null || currentLinkIndex == null) return;
             const sheet = spreadsheets[currentDocIndex];
-            const docId = extractDocIdFromUrl(sheet.link);
+            const link = sheet.links[currentLinkIndex];
+            const docId = extractDocIdFromUrl(link.link);
             const iframe = document.getElementById('docFrame');
             if (docId) {
                 iframe.src = buildEditUrl(docId);
             } else {
-                iframe.src = sheet.link;
+                iframe.src = link.link;
             }
         }
 
         function downloadDoc() {
-            if (currentDocIndex == null) return;
+            if (currentDocIndex == null || currentLinkIndex == null) return;
             const sheet = spreadsheets[currentDocIndex];
-            const docId = extractDocIdFromUrl(sheet.link);
-            let exportUrl = sheet.link;
+            const link = sheet.links[currentLinkIndex];
+            const docId = extractDocIdFromUrl(link.link);
+            let exportUrl = link.link;
             if (docId) {
                 exportUrl = `https://docs.google.com/document/d/${docId}/export?format=docx`;
             }
             window.open(exportUrl, '_blank', 'noopener');
         }
+
+        // Initialize by fetching data
+        fetchSpreadsheets();
     </script>
 </body>
 </html>
