@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acervo de Termos LAMIC</title>
+    <title>Acervo de Protocolos LAMIC</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
@@ -202,14 +202,57 @@
             border: 0;
             flex: 1 1 auto;
         }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #1e3a8a;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-icon {
+            font-size: 2rem;
+            color: #1e3a8a;
+            animation: pulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="flex flex-col items-center">
+            <div class="spinner mb-4"></div>
+        </div>
+    </div>
     <header class="navy-blue text-white py-4">
         <div class="container mx-auto flex items-center justify-between px-4">
             <div class="flex items-center space-x-4">
                 <img src="https://i.imgur.com/P13sT7A.png" alt="LAMIC Logo" class="h-12 w-auto object-contain">
-                <h1 class="text-3xl font-bold title-font"></h1>
+                <h1 class="text-3xl font-bold title-font">Acervo de Protocolos LAMIC</h1>
             </div>
             <nav class="flex space-x-2">
             </nav>
@@ -221,7 +264,7 @@
             <input type="text" id="searchInput" placeholder="Buscar por título..." class="search-bar p-3 border rounded-lg w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-900">
             <div class="dropdown">
                 <button class="p-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800">
-                    <span id="selectedSector">Filtrar por Termo</span>
+                    <span id="selectedSector">Filtrar por Protocolo</span>
                 </button>
                 <div id="sectorDropdown" class="dropdown-content rounded-lg">
                     <a href="#" class="block px-4 py-2 bg-blue-100 hover:bg-blue-200" onclick="filterBySector('')">Todos</a>
@@ -236,7 +279,7 @@
 
     <footer class="navy-blue text-white py-4">
         <div class="container mx-auto text-center">
-            <p>&copy; 2025 Acervo de Termos LAMIC. Todos os direitos reservados.</p>
+            <p>&copy; 2025 Acervo de Protocolos LAMIC. Todos os direitos reservados.</p>
         </div>
     </footer>
 
@@ -251,7 +294,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                     <span>Editar</span>
                 </button>
-                <button id="btnDownload" class="topbar-button" onclick="downloadDoc()" aria-label="Baixar">
+                <button id="btnDownloadDocx" class="topbar-button" onclick="downloadDocx()" aria-label="Baixar PDF">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     <span>Baixar</span>
                 </button>
@@ -294,26 +337,43 @@
             return gk_fileData[filename] || "";
         }
 
-        const FAVORITES_KEY = 'lamic_termos_favorites_v1';
-        let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+        const FAVORITES_KEY = 'lamic_protocolos_favorites_v1';
+        let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
         let selectedSector = '';
         let showFavorites = false;
         let spreadsheets = [];
 
+        function showLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'flex';
+            }
+        }
+
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
         // Fetch data from JSONBin
         async function fetchSpreadsheets() {
+            showLoading();
             try {
-                const response = await fetch('https://api.jsonbin.io/v3/b/68dbbb5b43b1c97be95554e6', {
+                const response = await fetch('https://api.jsonbin.io/v3/b/68dbbb4943b1c97be95554d9', {
                     headers: {
                         'X-Master-Key': '$2a$10$2elKW8TT6o.K3V176efqwu7kOfD1PnS3D/F0s4Tczc3MYmaU.N1bi'
                     }
                 });
                 const data = await response.json();
                 spreadsheets = data.record;
+                hideLoading();
                 initializeApp();
             } catch (error) {
                 console.error('Error fetching data from JSONBin:', error);
                 spreadsheets = [];
+                hideLoading();
                 initializeApp();
             }
         }
@@ -366,12 +426,12 @@
                 let linkHtml = '';
                 if (sheet.links && sheet.links.length > 0) {
                     if (sheet.links.length === 1 && !sheet.links[0].title) {
-                        linkHtml = `<a href="#" onclick="openDoc(${index}, 0); return false;" class="mt-4 modern-button">Acessar Termo</a>`;
+                        linkHtml = `<a href="#" onclick="openDoc(${index}, 0); return false;" class="mt-4 modern-button">Acessar Protocolo</a>`;
                     } else {
                         linkHtml = `<div class="dropdown inline-block">
-                            <a href="#" class="mt-4 modern-button">Acessar Termo</a>
+                            <a href="#" class="mt-4 modern-button">Acessar Protocolo</a>
                             <div class="dropdown-content rounded-lg">
-                                ${sheet.links.map((link, linkIndex) => `<a href="#" onclick="openDoc(${index}, ${linkIndex}); return false;" class="block px-4 py-2 hover:bg-gray-100">${link.title || 'Documento ' + (linkIndex + 1)}</a>`).join('')}
+                                ${sheet.links.map((link, linkIndex) => `<a href="#" onclick="openDoc(${index}, ${linkIndex}); return false;" class="block px-4 py-2 hover:bg-gray-100">${link.title || 'Protocolo ' + (linkIndex + 1)}</a>`).join('')}
                             </div>
                         </div>`;
                     }
@@ -379,7 +439,7 @@
                 card.innerHTML = `
                     <span class="star ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${index})">&#9733;</span>
                     <h2 class="text-lg font-semibold text-blue-900">${sheet.title}</h2>
-                    <p class="text-gray-600">Termo: ${sheet.sector}</p>
+                    <p class="text-gray-600">Protocolo: ${sheet.sector}</p>
                     ${linkHtml}
                     ${formHtml}
                 `;
@@ -423,7 +483,7 @@
         function filterBySector(sector) {
             selectedSector = sector;
             showFavorites = false;
-            document.getElementById('selectedSector').textContent = sector || 'Filtrar por Termo';
+            document.getElementById('selectedSector').textContent = sector || 'Filtrar por Protocolo';
             document.getElementById('favoriteFilter').classList.remove('active');
             updateCards();
         }
@@ -431,7 +491,7 @@
         function filterByFavorites() {
             showFavorites = !showFavorites;
             selectedSector = '';
-            document.getElementById('selectedSector').textContent = 'Filtrar por Termo';
+            document.getElementById('selectedSector').textContent = 'Filtrar por Protocolo';
             const favoriteButton = document.getElementById('favoriteFilter');
             favoriteButton.classList.toggle('active', showFavorites);
             updateCards();
@@ -457,6 +517,10 @@
             return `https://docs.google.com/document/d/${docId}/edit?rm=embedded`;
         }
 
+        function buildPdfUrl(docId) {
+            return `https://docs.google.com/document/d/${docId}/export?format=pdf`;
+        }
+
         function openDoc(index, linkIndex) {
             currentDocIndex = index;
             currentLinkIndex = linkIndex;
@@ -465,11 +529,14 @@
             const docId = extractDocIdFromUrl(link.link);
             const iframe = document.getElementById('docFrame');
             const titleEl = document.getElementById('docTitle');
+            const downloadBtn = document.getElementById('btnDownloadDocx');
             titleEl.textContent = link.title || sheet.title || '';
             if (docId) {
                 iframe.src = buildViewUrl(docId);
+                downloadBtn.style.display = '';
             } else {
                 iframe.src = link.link;
+                downloadBtn.style.display = 'none';
             }
             document.getElementById('docOverlay').style.display = 'flex';
         }
@@ -496,16 +563,20 @@
             }
         }
 
-        function downloadDoc() {
+        function downloadDocx() {
             if (currentDocIndex == null || currentLinkIndex == null) return;
             const sheet = spreadsheets[currentDocIndex];
             const link = sheet.links[currentLinkIndex];
             const docId = extractDocIdFromUrl(link.link);
-            let exportUrl = link.link;
-            if (docId) {
-                exportUrl = `https://docs.google.com/document/d/${docId}/export?format=docx`;
-            }
-            window.open(exportUrl, '_blank', 'noopener');
+            if (!docId) return;
+            const url = buildPdfUrl(docId);
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         // Initialize by fetching data
