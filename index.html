@@ -252,7 +252,7 @@
         <div class="container mx-auto flex items-center justify-between px-4">
             <div class="flex items-center space-x-4">
                 <img src="https://i.imgur.com/P13sT7A.png" alt="LAMIC Logo" class="h-12 w-auto object-contain">
-                <h1 class="text-3xl font-bold title-font">Acervo de Protocolos LAMIC</h1>
+                <h1 class="text-3xl font-bold title-font">Acervo de Termos LAMIC</h1>
             </div>
             <nav class="flex space-x-2">
             </nav>
@@ -264,7 +264,7 @@
             <input type="text" id="searchInput" placeholder="Buscar por título..." class="search-bar p-3 border rounded-lg w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-900">
             <div class="dropdown">
                 <button class="p-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800">
-                    <span id="selectedSector">Filtrar por Protocolo</span>
+                    <span id="selectedSector">Filtrar por Termo</span>
                 </button>
                 <div id="sectorDropdown" class="dropdown-content rounded-lg">
                     <a href="#" class="block px-4 py-2 bg-blue-100 hover:bg-blue-200" onclick="filterBySector('')">Todos</a>
@@ -279,7 +279,7 @@
 
     <footer class="navy-blue text-white py-4">
         <div class="container mx-auto text-center">
-            <p>&copy; 2025 Acervo de Protocolos LAMIC. Todos os direitos reservados.</p>
+            <p>&copy; 2025 Acervo de Termos LAMIC. Todos os direitos reservados.</p>
         </div>
     </footer>
 
@@ -337,7 +337,7 @@
             return gk_fileData[filename] || "";
         }
 
-        const FAVORITES_KEY = 'lamic_protocolos_favorites_v1';
+        const FAVORITES_KEY = 'lamic_Termos_favorites_v1';
         let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
         let selectedSector = '';
         let showFavorites = false;
@@ -426,12 +426,12 @@
                 let linkHtml = '';
                 if (sheet.links && sheet.links.length > 0) {
                     if (sheet.links.length === 1 && !sheet.links[0].title) {
-                        linkHtml = `<a href="#" onclick="openDoc(${index}, 0); return false;" class="mt-4 modern-button">Acessar Protocolo</a>`;
+                        linkHtml = `<a href="#" onclick="openDoc(${index}, 0); return false;" class="mt-4 modern-button">Acessar Termo</a>`;
                     } else {
                         linkHtml = `<div class="dropdown inline-block">
-                            <a href="#" class="mt-4 modern-button">Acessar Protocolo</a>
+                            <a href="#" class="mt-4 modern-button">Acessar Termo</a>
                             <div class="dropdown-content rounded-lg">
-                                ${sheet.links.map((link, linkIndex) => `<a href="#" onclick="openDoc(${index}, ${linkIndex}); return false;" class="block px-4 py-2 hover:bg-gray-100">${link.title || 'Protocolo ' + (linkIndex + 1)}</a>`).join('')}
+                                ${sheet.links.map((link, linkIndex) => `<a href="#" onclick="openDoc(${index}, ${linkIndex}); return false;" class="block px-4 py-2 hover:bg-gray-100">${link.title || 'Termo ' + (linkIndex + 1)}</a>`).join('')}
                             </div>
                         </div>`;
                     }
@@ -439,7 +439,7 @@
                 card.innerHTML = `
                     <span class="star ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${index})">&#9733;</span>
                     <h2 class="text-lg font-semibold text-blue-900">${sheet.title}</h2>
-                    <p class="text-gray-600">Protocolo: ${sheet.sector}</p>
+                    <p class="text-gray-600">Termo: ${sheet.sector}</p>
                     ${linkHtml}
                     ${formHtml}
                 `;
@@ -483,7 +483,7 @@
         function filterBySector(sector) {
             selectedSector = sector;
             showFavorites = false;
-            document.getElementById('selectedSector').textContent = sector || 'Filtrar por Protocolo';
+            document.getElementById('selectedSector').textContent = sector || 'Filtrar por Termo';
             document.getElementById('favoriteFilter').classList.remove('active');
             updateCards();
         }
@@ -491,7 +491,7 @@
         function filterByFavorites() {
             showFavorites = !showFavorites;
             selectedSector = '';
-            document.getElementById('selectedSector').textContent = 'Filtrar por Protocolo';
+            document.getElementById('selectedSector').textContent = 'Filtrar por Termo';
             const favoriteButton = document.getElementById('favoriteFilter');
             favoriteButton.classList.toggle('active', showFavorites);
             updateCards();
