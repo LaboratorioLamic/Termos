@@ -565,19 +565,49 @@
 
         function downloadDocx() {
             if (currentDocIndex == null || currentLinkIndex == null) return;
+
             const sheet = spreadsheets[currentDocIndex];
             const link = sheet.links[currentLinkIndex];
             const docId = extractDocIdFromUrl(link.link);
-            if (!docId) return;
-            const url = buildPdfUrl(docId);
+
+            // Só funciona para documentos do Google Docs/Drive
+            if (!docId) {
+                alert("Download não disponível para este tipo de link.");
+                return;
+            }
+
+            let exportUrl;
+
+            // Regra especial para o setor VIVA+
+            if (sheet.sector === "VIVA+") {
+                // Exporta como PDF
+                exportUrl = `https://docs.google.com/document/d/${docId}/export?format=pdf`;
+            } else {
+                // Exporta como Word (.docx) - comportamento padrão
+                exportUrl = `https://docs.google.com/document/d/${docId}/export?format=docx`;
+            }
+
+            // Cria link temporário e dispara o download
             const a = document.createElement('a');
-            a.href = url;
+            a.href = exportUrl;
             a.target = '_blank';
             a.rel = 'noopener';
+
+            // Opcional: definir nome do arquivo mais amigável
+            const fileName = (link.title || sheet.title || 'documento')
+                .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚçÇ ]/g, '')
+                .trim()
+                .replace(/\s+/g, '_');
+
+            a.download = sheet.sector === "VIVA+" 
+                ? `${fileName}.pdf` 
+                : `${fileName}.docx`;
+
             document.body.appendChild(a);
             a.click();
+            a.click();
             document.body.removeChild(a);
-        }
+}
 
         // Initialize by fetching data
         fetchSpreadsheets();
