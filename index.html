@@ -305,6 +305,8 @@
         <iframe id="docFrame" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write; fullscreen"></iframe>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <script type="text/javascript">
         var gk_isXlsx = false;
         var gk_xlsxFileLookup = {};
@@ -357,28 +359,46 @@
             }
         }
 
-        // Fetch data from JSONBin
+        // Fetch data from Firebase Realtime Database
         async function fetchSpreadsheets() {
             showLoading();
             try {
-                const response = await fetch('https://api.jsonbin.io/v3/b/68dbbb5b43b1c97be95554e6', {
-                    headers: {
-                        'X-Master-Key': '$2a$10$2elKW8TT6o.K3V176efqwu7kOfD1PnS3D/F0s4Tczc3MYmaU.N1bi'
-                    }
-                });
-                const data = await response.json();
-                spreadsheets = data.record;
-                hideLoading();
-                initializeApp();
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCKf_VEpXXAhcyuqmcFGdR7Q7hi7a5jOto",
+                    authDomain: "docadmin-f5ae2.firebaseapp.com",
+                    projectId: "docadmin-f5ae2",
+                    storageBucket: "docadmin-f5ae2.firebasestorage.app",
+                    messagingSenderId: "972462326550",
+                    appId: "1:972462326550:web:1b56a26ed610b408638637"
+                };
+
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+
+                const db = firebase.database();
+                const snapshot = await db.ref('categories/Termos').once('value');
+                const data = snapshot.val();
+
+                if (Array.isArray(data)) {
+                    spreadsheets = data;
+                } else if (data && typeof data === 'object') {
+                    spreadsheets = Object.keys(data)
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map(key => data[key]);
+                } else {
+                    spreadsheets = [];
+                }
             } catch (error) {
-                console.error('Error fetching data from JSONBin:', error);
+                console.error('Error fetching data from Firebase Realtime Database:', error);
                 spreadsheets = [];
+            } finally {
                 hideLoading();
-                initializeApp();
+                initializeUI();
             }
         }
 
-        function initializeApp() {
+        function initializeUI() {
             // Sort spreadsheets by sector then by title
             spreadsheets.sort((a, b) => {
                 if (a.sector < b.sector) return -1;
