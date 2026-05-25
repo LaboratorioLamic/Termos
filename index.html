@@ -629,6 +629,15 @@
             document.body.removeChild(a);
 }
 
+        // Expose handlers globally for inline onclick attributes
+        window.openDoc = openDoc;
+        window.filterBySector = filterBySector;
+        window.filterByFavorites = filterByFavorites;
+        window.toggleFavorite = toggleFavorite;
+        window.closeDoc = closeDoc;
+        window.switchToEditMode = switchToEditMode;
+        window.downloadDocx = downloadDocx;
+
         // Initialize by fetching data
         fetchSpreadsheets();
     </script>
