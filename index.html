@@ -3,317 +3,882 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acervo de Termos LAMIC</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>Acervo de Termos — LAMIC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --sidebar-w: 256px;
+            --topbar-h: 60px;
+            --sidebar-bg: #0f172a;
+            --sidebar-border: rgba(255,255,255,0.07);
+            --sidebar-hover: rgba(255,255,255,0.07);
+            --sidebar-active-bg: rgba(59,130,246,0.14);
+            --sidebar-active-text: #93c5fd;
+            --sidebar-text: #94a3b8;
+            --surface: #f1f5f9;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --primary: #1e3a8a;
+            --primary-hover: #1d4ed8;
+            --accent: #3b82f6;
+            --radius-card: 14px;
+            --radius-btn: 8px;
+        }
+
         body {
-            background-color: #f9fafb;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--surface);
+            color: var(--text-primary);
+            min-height: 100vh;
         }
-        .navy-blue {
-            background-color: #1e3a8a;
-        }
-        .title-font {
-            font-family: 'Playfair Display', serif;
-        }
-        .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            z-index: 1;
-        }
-        .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
-            z-index: 2;
-        }
-        .search-bar {
-            max-width: 600px;
-        }
-        .dropdown {
-            position: relative;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #ffffff;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
-            z-index: 10;
-            max-height: 200px;
+
+        /* ===== SIDEBAR ===== */
+        #sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
         }
-        .dropdown:hover .dropdown-content {
-            display: block;
+
+        .sidebar-header {
+            padding: 18px 18px 14px;
+            border-bottom: 1px solid var(--sidebar-border);
+            flex-shrink: 0;
         }
-        .form-dropdown {
-            position: relative;
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 11px;
         }
-        .form-dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #ffffff;
-            min-width: 200px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
-            z-index: 30;
-            top: 100%;
-            left: 0;
-            padding-top: 4px;
-            max-height: 200px;
-            overflow-y: auto;
+
+        .sidebar-logo img {
+            height: 34px;
+            width: auto;
+            filter: brightness(0) invert(1);
+            object-fit: contain;
         }
-        .form-dropdown:hover .form-dropdown-content {
-            display: block;
+
+        .sidebar-brand {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
         }
-        .modern-button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #1e3a8a;
-            color: white;
-            border-radius: 6px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .modern-button:hover {
-            background-color: #2b6cb0;
-            transform: scale(1.05);
-        }
-        .form-button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #6b21a8;
-            color: white;
-            border-radius: 6px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .form-button:hover {
-            background-color: #7e22ce;
-            transform: scale(1.05);
-        }
-        .favorite-button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #d4af37;
-            color: white;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .favorite-button.active {
-            background-color: #fef3c7;
-            color: #1f2937;
-            border: 2px solid #d4af37;
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .favorite-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.4s ease, height 0.4s ease;
-        }
-        .favorite-button:hover::before {
-            width: 200px;
-            height: 200px;
-        }
-        .favorite-button:hover {
-            background-color: #b8972e;
-            transform: scale(1.05);
-        }
-        .favorite-button.active:hover {
-            background-color: #f7e5a3;
-        }
-        .nav-item {
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+        .sidebar-subtitle {
+            font-size: 0.68rem;
+            color: #475569;
+            margin-top: 2px;
             font-weight: 500;
+            letter-spacing: 0.02em;
         }
-        .nav-item:hover {
-            background-color: #2b6cb0;
-            transform: scale(1.05);
+
+        .sidebar-section {
+            padding: 14px 18px 0;
         }
-        .star {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+
+        .sidebar-section-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-nav {
+            padding: 4px 10px 8px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: var(--sidebar-text);
+            font-size: 0.83rem;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 1.5rem;
+            transition: background 0.15s, color 0.15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            text-decoration: none;
         }
-        .star.favorited {
-            color: #d4af37;
+
+        .sidebar-link:hover {
+            background: var(--sidebar-hover);
+            color: #e2e8f0;
         }
-        .star:not(.favorited) {
-            color: #d1d5db;
+
+        .sidebar-link.active {
+            background: var(--sidebar-active-bg);
+            color: var(--sidebar-active-text);
         }
+
+        .sidebar-link svg { flex-shrink: 0; opacity: 0.75; }
+        .sidebar-link.active svg { opacity: 1; }
+
+        .sidebar-sector-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 7px 10px;
+            border-radius: 7px;
+            color: var(--sidebar-text);
+            font-size: 0.79rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .sidebar-sector-item:hover {
+            background: var(--sidebar-hover);
+            color: #e2e8f0;
+        }
+
+        .sidebar-sector-item.active {
+            background: var(--sidebar-active-bg);
+            color: var(--sidebar-active-text);
+        }
+
+        .sector-badge {
+            background: rgba(255,255,255,0.09);
+            border-radius: 20px;
+            padding: 1px 7px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #64748b;
+            flex-shrink: 0;
+        }
+
+        .sidebar-sector-item.active .sector-badge {
+            background: rgba(147,197,253,0.15);
+            color: var(--sidebar-active-text);
+        }
+
+        /* ===== MAIN AREA ===== */
+        #main-wrapper {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== TOPBAR ===== */
+        #topbar {
+            position: sticky;
+            top: 0;
+            height: var(--topbar-h);
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .topbar-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative;
+        }
+
+        .topbar-search input {
+            width: 100%;
+            padding: 9px 14px 9px 40px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            font-size: 0.855rem;
+            font-family: inherit;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .topbar-search input::placeholder { color: var(--text-muted); }
+        .topbar-search input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .topbar-search .search-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topbar-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f8fafc;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .topbar-badge span {
+            background: var(--primary);
+            color: white;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .btn-fav {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-btn);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: white;
+            cursor: pointer;
+            font-family: inherit;
+            transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
+            margin-right: 100px;
+        }
+
+        .btn-fav:hover {
+            border-color: #f59e0b;
+            color: #d97706;
+            background: #fffbeb;
+        }
+
+        .btn-fav.active {
+            border-color: #f59e0b;
+            background: #fef3c7;
+            color: #b45309;
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.1);
+        }
+
+        /* ===== PAGE CONTENT ===== */
+        #page-content {
+            flex: 1;
+            padding: 26px 24px 32px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .page-title {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .page-desc {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        /* ===== STATS ===== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue { background: #eff6ff; color: #3b82f6; }
+        .stat-icon.green { background: #f0fdf4; color: #16a34a; }
+        .stat-icon.amber { background: #fffbeb; color: #d97706; }
+
+        .stat-val {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-lbl {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* ===== FILTER BAR ===== */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .filter-label strong {
+            color: var(--text-primary);
+        }
+
+        /* ===== CARDS GRID ===== */
+        #spreadsheetList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 15px;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 18px 18px 16px;
+            transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 24px rgba(15,23,42,0.09);
+            transform: translateY(-2px);
+            border-color: #bfdbfe;
+        }
+
+        .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .card-icon-wrap {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .star {
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 3px 5px;
+            border-radius: 6px;
+            transition: color 0.15s, background 0.15s;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .star.favorited { color: #f59e0b; }
+        .star:not(.favorited) { color: #cbd5e1; }
+        .star:hover { background: #fef9c3; color: #f59e0b; }
+
+        .card-body { flex: 1; }
+
+        .card-title {
+            font-size: 0.93rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.45;
+            margin-bottom: 8px;
+        }
+
+        .card-sector-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #2563eb;
+            background: #eff6ff;
+            border-radius: 5px;
+            padding: 3px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 14px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 13px;
+            background: var(--primary);
+            color: white;
+            border-radius: 7px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.01em;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 3px 10px rgba(30,58,138,0.28);
+        }
+
+        .btn-form {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 13px;
+            background: #faf5ff;
+            color: #7c3aed;
+            border: 1.5px solid #e9d5ff;
+            border-radius: 7px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s, border-color 0.2s;
+            letter-spacing: 0.01em;
+        }
+
+        .btn-form:hover {
+            background: #f3e8ff;
+            border-color: #a855f7;
+        }
+
+        /* ===== DROPDOWNS ===== */
+        .dropdown, .form-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content, .form-dropdown-content {
+            display: none;
+            position: fixed;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            z-index: 9999;
+            overflow: hidden;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .dropdown-content a, .form-dropdown-content a {
+            display: block;
+            padding: 9px 14px;
+            font-size: 0.81rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-family: inherit;
+            transition: background 0.1s;
+        }
+
+        .dropdown-content a:hover, .form-dropdown-content a:hover {
+            background: #f1f5f9;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 56px 24px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            opacity: 0.25;
+        }
+
+        .empty-state h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 0.83rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== FOOTER ===== */
+        #footer {
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 14px 24px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== DOC OVERLAY ===== */
         #docOverlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #ffffff;
+            inset: 0;
+            background: white;
             z-index: 1000;
             display: none;
             flex-direction: column;
         }
+
         #docTopBar {
-            background-color: #1e3a8a;
-            color: #ffffff;
+            background: #0f172a;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 0 20px;
+            height: 54px;
+            flex-shrink: 0;
+            gap: 12px;
         }
+
         .topbar-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
+
         .topbar-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
-            background: rgba(255,255,255,0.1);
-            color: #ffffff;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            backdrop-filter: blur(4px);
+            gap: 7px;
+            padding: 7px 14px;
+            background: rgba(255,255,255,0.07);
+            color: #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 7px;
+            font-size: 0.79rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.15s;
         }
+
         .topbar-button:hover {
-            background: rgba(255,255,255,0.18);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
-            transform: translateY(-1px);
+            background: rgba(255,255,255,0.14);
         }
-        .topbar-button:active {
-            transform: translateY(0);
+
+        #docTitle {
+            font-size: 0.83rem;
+            color: #64748b;
+            max-width: 38%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            text-align: center;
         }
+
         #docFrame {
+            flex: 1;
             width: 100%;
-            height: calc(100vh - 56px);
             border: 0;
-            flex: 1 1 auto;
         }
+
+        /* ===== LOADING ===== */
         .loading-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
+            inset: 0;
+            background: rgba(241,245,249,0.92);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(4px);
+            z-index: 2000;
+            backdrop-filter: blur(6px);
+        }
+
+        .loading-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
         }
 
         .spinner {
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #1e3a8a;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #1e3a8a;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
+            width: 42px;
+            height: 42px;
+            animation: spin 0.75s linear infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loading-text {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.01em;
         }
 
-        .loading-icon {
-            font-size: 2rem;
-            color: #1e3a8a;
-            animation: pulse 1.5s ease-in-out infinite alternate;
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes pulse {
-            from { opacity: 0.5; }
-            to { opacity: 1; }
-        }
+        /* ===== SCROLLBAR ===== */
+        #sidebar::-webkit-scrollbar { width: 4px; }
+        #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
+
+    <!-- Loading -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-        <div class="flex flex-col items-center">
-            <div class="spinner mb-4"></div>
+        <div class="loading-inner">
+            <div class="spinner"></div>
+            <span class="loading-text">Carregando acervo…</span>
         </div>
     </div>
-    <header class="navy-blue text-white py-4">
-        <div class="container mx-auto flex items-center justify-between px-4">
-            <div class="flex items-center space-x-4">
-                <img src="https://i.imgur.com/P13sT7A.png" alt="LAMIC Logo" class="h-12 w-auto object-contain">
-                <h1 class="text-3xl font-bold title-font">Acervo de Termos LAMIC</h1>
-            </div>
-            <nav class="flex space-x-2">
-            </nav>
-        </div>
-    </header>
 
-    <main class="container mx-auto py-8 flex-grow">
-        <div class="mb-8 flex flex-col md:flex-row gap-4 items-center justify-center">
-            <input type="text" id="searchInput" placeholder="Buscar por título..." class="search-bar p-3 border rounded-lg w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-900">
-            <div class="dropdown">
-                <button class="p-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800">
-                    <span id="selectedSector">Filtrar por Termo</span>
-                </button>
-                <div id="sectorDropdown" class="dropdown-content rounded-lg">
-                    <a href="#" class="block px-4 py-2 bg-blue-100 hover:bg-blue-200" onclick="filterBySector('')">Todos</a>
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="https://i.imgur.com/P13sT7A.png" alt="LAMIC">
+                <div class="sidebar-brand-wrap">
+                    <div class="sidebar-brand">Acervo de Termos</div>
+                    <div class="sidebar-subtitle">LAMIC · Gestão Documental</div>
                 </div>
             </div>
-            <button id="favoriteFilter" class="p-3 favorite-button" onclick="filterByFavorites()">Favoritos</button>
         </div>
 
-        <div id="spreadsheetList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Navegação</div>
         </div>
-    </main>
+        <nav class="sidebar-nav">
+            <button class="sidebar-link active" id="navAll" onclick="filterBySector(''); setActiveNav('navAll')">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Todos os Termos
+            </button>
+            <button class="sidebar-link" id="navFav" onclick="filterByFavorites()">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Favoritos
+            </button>
+        </nav>
 
-    <footer class="navy-blue text-white py-4">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2025 Acervo de Termos LAMIC. Todos os direitos reservados.</p>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Categorias</div>
         </div>
-    </footer>
+        <nav class="sidebar-nav" id="sectorNav">
+            <!-- Populated dynamically -->
+        </nav>
+    </aside>
 
+    <!-- Main wrapper -->
+    <div id="main-wrapper">
+
+        <!-- Topbar -->
+        <header id="topbar">
+            <div class="topbar-search">
+                <svg class="search-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="searchInput" placeholder="Buscar por título do Termo…">
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-badge">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Termos carregados <span id="topbarCount">—</span>
+                </div>
+                <button id="favoriteFilter" class="btn-fav" onclick="filterByFavorites()">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    Favoritos
+                </button>
+            </div>
+        </header>
+
+        <!-- Page content -->
+        <main id="page-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Procedimentos Operacionais Padrão</h1>
+                    <p class="page-desc">Acervo centralizado de documentação técnica do Laboratório LAMIC</p>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </div>
+                    <div>
+                        <div class="stat-val" id="statTotal">—</div>
+                        <div class="stat-lbl">Total de Termos</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    </div>
+                    <div>
+                        <div class="stat-val" id="statSectors">—</div>
+                        <div class="stat-lbl">Categorias</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon amber">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <div>
+                        <div class="stat-val" id="statFavs">—</div>
+                        <div class="stat-lbl">Favoritos</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter bar info -->
+            <div class="filter-bar">
+                <p class="filter-label" id="filterInfo">Exibindo <strong id="filterCount">—</strong> procedimentos</p>
+            </div>
+
+            <!-- Cards -->
+            <div id="spreadsheetList"></div>
+        </main>
+
+        <footer id="footer">
+            &copy; 2025 Acervo de Termos LAMIC &nbsp;·&nbsp; Todos os direitos reservados
+        </footer>
+    </div>
+
+    <!-- Doc Overlay -->
     <div id="docOverlay">
         <div id="docTopBar">
             <div class="topbar-left">
-                <button id="btnBack" class="topbar-button" onclick="closeDoc()" aria-label="Voltar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    <span>Voltar</span>
+                <button class="topbar-button" onclick="closeDoc()">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                    Voltar
                 </button>
-                <button id="btnEdit" class="topbar-button" onclick="switchToEditMode()" aria-label="Editar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    <span>Editar</span>
+                <button id="btnEdit" class="topbar-button" onclick="switchToEditMode()">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Editar
                 </button>
-                <button id="btnDownloadDocx" class="topbar-button" onclick="downloadDocx()" aria-label="Baixar em Word">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span>Baixar</span>
+                <button id="btnDownload" class="topbar-button" onclick="downloadDoc()">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Baixar
                 </button>
             </div>
-            <div class="text-sm opacity-80" id="docTitle"></div>
-            <div style="width: 96px;"></div>
+            <div id="docTitle"></div>
+            <div style="width: 200px;"></div>
         </div>
         <iframe id="docFrame" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write; fullscreen"></iframe>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-    <script type="text/javascript">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
+        import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCKf_VEpXXAhcyuqmcFGdR7Q7hi7a5jOto",
+            authDomain: "docadmin-f5ae2.firebaseapp.com",
+            databaseURL: "https://docadmin-f5ae2-default-rtdb.firebaseio.com",
+            projectId: "docadmin-f5ae2",
+            storageBucket: "docadmin-f5ae2.appspot.com",
+            messagingSenderId: "972462326550",
+            appId: "1:972462326550:web:1b56a26ed610b408638637"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const FAVORITES_KEY = 'lamic_termos_favorites_v1';
+        let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+        let spreadsheets = [];
+        let selectedSector = '';
+        let showFavorites = false;
+
         var gk_isXlsx = false;
         var gk_xlsxFileLookup = {};
         var gk_fileData = {};
+
         function filledCell(cell) {
             return cell !== '' && cell != null;
         }
+
         function loadFileData(filename) {
             if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
                 try {
@@ -325,9 +890,7 @@
                     var headerRowIndex = filteredData.findIndex((row, index) =>
                         row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
                     );
-                    if (headerRowIndex === -1 || headerRowIndex > 25) {
-                        headerRowIndex = 0;
-                    }
+                    if (headerRowIndex === -1 || headerRowIndex > 25) headerRowIndex = 0;
                     var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
                     csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
                     return csv;
@@ -339,194 +902,353 @@
             return gk_fileData[filename] || "";
         }
 
-        const FAVORITES_KEY = 'lamic_Termos_favorites_v1';
-        let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
-        let selectedSector = '';
-        let showFavorites = false;
-        let spreadsheets = [];
-
         function showLoading() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.display = 'flex';
-            }
+            const el = document.getElementById('loadingOverlay');
+            if (el) el.style.display = 'flex';
         }
 
         function hideLoading() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.display = 'none';
-            }
+            const el = document.getElementById('loadingOverlay');
+            if (el) el.style.display = 'none';
         }
 
-        // Fetch data from Firebase Realtime Database
-        async function fetchSpreadsheets() {
+        function extractProtocolArray(rawData) {
+            if (!rawData) return [];
+            if (Array.isArray(rawData)) return rawData;
+            return Object.entries(rawData)
+                .sort(([a], [b]) => {
+                    const na = Number(a), nb = Number(b);
+                    if (!Number.isNaN(na) && !Number.isNaN(nb)) return na - nb;
+                    return String(a).localeCompare(String(b));
+                })
+                .map(([, value]) => value);
+        }
+
+        async function loadSpreadsheets() {
             showLoading();
             try {
-                const firebaseConfig = {
-                    apiKey: "AIzaSyCKf_VEpXXAhcyuqmcFGdR7Q7hi7a5jOto",
-                    authDomain: "docadmin-f5ae2.firebaseapp.com",
-                    projectId: "docadmin-f5ae2",
-                    storageBucket: "docadmin-f5ae2.firebasestorage.app",
-                    messagingSenderId: "972462326550",
-                    appId: "1:972462326550:web:1b56a26ed610b408638637"
-                };
+                const dataRef = ref(database, 'categories/Termos');
+                const snapshot = await get(dataRef);
+                const rawData = snapshot.exists() ? snapshot.val() : null;
 
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
+                spreadsheets = extractProtocolArray(rawData);
 
-                const db = firebase.database();
-                const snapshot = await db.ref('categories/Termos').once('value');
-                const data = snapshot.val();
+                spreadsheets.sort((a, b) => {
+                    if (a.sector < b.sector) return -1;
+                    if (a.sector > b.sector) return 1;
+                    if (a.title < b.title) return -1;
+                    if (a.title > b.title) return 1;
+                    return 0;
+                });
 
-                if (Array.isArray(data)) {
-                    spreadsheets = data;
-                } else if (data && typeof data === 'object') {
-                    spreadsheets = Object.keys(data)
-                        .sort((a, b) => Number(a) - Number(b))
-                        .map(key => data[key]);
-                } else {
-                    spreadsheets = [];
-                }
+                populateSectorNav();
+                renderCards();
+                updateStats();
+                updateCards();
             } catch (error) {
-                console.error('Error fetching data from Firebase Realtime Database:', error);
+                console.error('Error loading Firebase data:', error);
                 spreadsheets = [];
+                populateSectorNav();
+                renderCards();
             } finally {
                 hideLoading();
-                initializeUI();
             }
         }
 
-        function initializeUI() {
-            // Sort spreadsheets by sector then by title
-            spreadsheets.sort((a, b) => {
-                if (a.sector < b.sector) return -1;
-                if (a.sector > b.sector) return 1;
-                if (a.title < b.title) return -1;
-                if (a.title > b.title) return 1;
-                return 0;
-            });
-
-            // Populate sector dropdown
-            const uniqueSectors = [...new Set(spreadsheets.map(sheet => sheet.sector))].sort();
-            const sectorDropdown = document.getElementById('sectorDropdown');
-            sectorDropdown.innerHTML = `<a href="#" class="block px-4 py-2 bg-blue-100 hover:bg-blue-200" onclick="filterBySector('')">Todos</a>`;
+        function populateSectorNav() {
+            const uniqueSectors = [...new Set(spreadsheets.map(s => s.sector))].sort();
+            const nav = document.getElementById('sectorNav');
+            nav.innerHTML = '';
             uniqueSectors.forEach(sector => {
-                const a = document.createElement('a');
-                a.href = '#';
-                a.className = 'block px-4 py-2 hover:bg-gray-100';
-                a.textContent = sector;
-                a.onclick = () => filterBySector(sector);
-                sectorDropdown.appendChild(a);
+                const count = spreadsheets.filter(s => s.sector === sector).length;
+                const btn = document.createElement('button');
+                btn.className = 'sidebar-sector-item';
+                btn.dataset.sector = sector;
+                btn.innerHTML = `<span>${sector}</span><span class="sector-badge">${count}</span>`;
+                btn.onclick = () => {
+                    filterBySector(sector);
+                    document.querySelectorAll('.sidebar-sector-item').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('navAll').classList.remove('active');
+                    document.getElementById('navFav').classList.remove('active');
+                };
+                nav.appendChild(btn);
             });
+        }
 
-            // Render cards
-            const spreadsheetList = document.getElementById('spreadsheetList');
-            spreadsheetList.innerHTML = '';
+        function updateStats() {
+            const uniqueSectors = [...new Set(spreadsheets.map(s => s.sector))];
+            document.getElementById('statTotal').textContent = spreadsheets.length;
+            document.getElementById('statSectors').textContent = uniqueSectors.length;
+            document.getElementById('statFavs').textContent = favorites.length;
+            document.getElementById('topbarCount').textContent = spreadsheets.length;
+        }
+
+        function renderCards() {
+            closeActiveDropdown();
+            const list = document.getElementById('spreadsheetList');
+            list.innerHTML = '';
             spreadsheets.forEach((sheet, index) => {
                 const card = document.createElement('div');
-                card.className = 'card bg-white p-6 rounded-lg shadow-md';
+                card.className = 'card';
                 card.dataset.sector = sheet.sector;
                 card.dataset.index = index;
+
                 const isFavorited = favorites.includes(index);
+
                 let formHtml = '';
                 if (sheet.forms && sheet.forms.length > 0) {
                     if (sheet.forms.length === 1) {
-                        formHtml = `<a href="${sheet.forms[0].link}" target="_blank" class="mt-4 form-button ml-4">Acessar Formulário</a>`;
+                        formHtml = `<a href="${sheet.forms[0].link}" target="_blank" class="btn-form">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Formulário
+                        </a>`;
                     } else {
-                        formHtml = `<div class="form-dropdown inline-block ml-4">
-                            <a href="#" class="mt-4 form-button">Acessar Formulário</a>
-                            <div class="form-dropdown-content rounded-lg">
-                                ${sheet.forms.map(form => `<a href="${form.link}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">${form.title}</a>`).join('')}
+                        formHtml = `<div class="form-dropdown">
+                            <a href="#" class="btn-form">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                Formulário
+                            </a>
+                            <div class="form-dropdown-content">
+                                ${sheet.forms.map(f => `<a href="${f.link}" target="_blank">${f.title}</a>`).join('')}
                             </div>
                         </div>`;
                     }
                 }
+
                 let linkHtml = '';
                 if (sheet.links && sheet.links.length > 0) {
                     if (sheet.links.length === 1 && !sheet.links[0].title) {
-                        linkHtml = `<a href="#" onclick="openDoc(${index}, 0); return false;" class="mt-4 modern-button">Acessar Termo</a>`;
+                        linkHtml = `<a href="#" onclick="openDoc(${index}); return false;" class="btn-primary">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Termo
+                        </a>`;
                     } else {
-                        linkHtml = `<div class="dropdown inline-block">
-                            <a href="#" class="mt-4 modern-button">Acessar Termo</a>
-                            <div class="dropdown-content rounded-lg">
-                                ${sheet.links.map((link, linkIndex) => `<a href="#" onclick="openDoc(${index}, ${linkIndex}); return false;" class="block px-4 py-2 hover:bg-gray-100">${link.title || 'Termo ' + (linkIndex + 1)}</a>`).join('')}
+                        linkHtml = `<div class="dropdown">
+                            <a href="#" class="btn-primary">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Termo
+                            </a>
+                            <div class="dropdown-content">
+                                ${sheet.links.map(link => `<a href="#" onclick="openDoc(${index}, '${link.link}'); return false;">${link.title || link.link}</a>`).join('')}
                             </div>
                         </div>`;
                     }
                 }
-                card.innerHTML = `
-                    <span class="star ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${index})">&#9733;</span>
-                    <h2 class="text-lg font-semibold text-blue-900">${sheet.title}</h2>
-                    <p class="text-gray-600">Termo: ${sheet.sector}</p>
-                    ${linkHtml}
-                    ${formHtml}
-                `;
-                spreadsheetList.appendChild(card);
-            });
 
-            updateCards();
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div class="card-icon-wrap">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <span class="star ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${index})">&#9733;</span>
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title">${sheet.title}</h2>
+                        <span class="card-sector-tag">${sheet.sector}</span>
+                    </div>
+                    <div class="card-footer">
+                        ${linkHtml}
+                        ${formHtml}
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+            bindDropdowns();
+        }
+
+        let activeDropdown = null;
+
+        function closeActiveDropdown() {
+            if (!activeDropdown) return;
+            const { wrapper, menu } = activeDropdown;
+            menu.style.display = 'none';
+            menu.removeAttribute('data-fd-open');
+            if (document.body.contains(menu)) {
+                document.body.removeChild(menu);
+            }
+            if (wrapper && wrapper.contains(menu) === false && wrapper.parentNode) {
+                wrapper.appendChild(menu);
+            }
+            activeDropdown = null;
+            document.removeEventListener('click', handleDocumentClick);
+            window.removeEventListener('resize', handleWindowChange);
+            window.removeEventListener('scroll', handleWindowChange, true);
+        }
+
+        function handleDocumentClick(event) {
+            if (!activeDropdown) return;
+            const { toggle, menu } = activeDropdown;
+            if (toggle.contains(event.target) || menu.contains(event.target)) return;
+            closeActiveDropdown();
+        }
+
+        function handleWindowChange() {
+            if (!activeDropdown) return;
+            positionDropdownMenu(activeDropdown.menu, activeDropdown.toggle);
+        }
+
+        function positionDropdownMenu(menu, toggle) {
+            const rect = toggle.getBoundingClientRect();
+            const margin = 8;
+            const width = Math.max(rect.width, 200);
+            let left = rect.left;
+            const maxRight = window.innerWidth - margin;
+            if (left + width > maxRight) {
+                left = Math.max(margin, maxRight - width);
+            }
+            menu.style.position = 'fixed';
+            menu.style.top = `${rect.bottom + 5}px`;
+            menu.style.left = `${left}px`;
+            menu.style.width = `${width}px`;
+            menu.style.zIndex = '9999';
+        }
+
+        function bindDropdowns() {
+            document.querySelectorAll('#spreadsheetList .dropdown, #spreadsheetList .form-dropdown')
+                .forEach(wrapper => {
+                    if (wrapper.dataset.fdBound) return;
+
+                    const toggle = wrapper.querySelector('a.btn-primary, a.btn-form');
+                    const menu = wrapper.querySelector('.dropdown-content, .form-dropdown-content');
+                    if (!toggle || !menu) return;
+
+                    toggle.addEventListener('click', event => {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        if (activeDropdown && activeDropdown.menu === menu) {
+                            closeActiveDropdown();
+                            return;
+                        }
+
+                        closeActiveDropdown();
+
+                        if (menu.parentNode !== document.body) {
+                            document.body.appendChild(menu);
+                        }
+
+                        positionDropdownMenu(menu, toggle);
+                        menu.style.display = 'block';
+                        menu.dataset.fdOpen = 'true';
+                        activeDropdown = { wrapper, toggle, menu };
+
+                        document.addEventListener('click', handleDocumentClick);
+                        window.addEventListener('resize', handleWindowChange);
+                        window.addEventListener('scroll', handleWindowChange, true);
+                    });
+
+                    menu.addEventListener('click', () => {
+                        if (activeDropdown && activeDropdown.menu === menu) {
+                            closeActiveDropdown();
+                        }
+                    });
+
+                    wrapper.dataset.fdBound = 'true';
+                });
         }
 
         function toggleFavorite(index) {
             if (favorites.includes(index)) {
-                favorites = favorites.filter(fav => fav !== index);
+                favorites = favorites.filter(f => f !== index);
             } else {
                 favorites.push(index);
             }
             localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+            document.getElementById('statFavs').textContent = favorites.length;
             updateCards();
         }
 
+        function normalizeString(str) {
+            return str.toLowerCase()
+                .normalize('NFD')
+                .replace(/[̀-ͯ]/g, '')
+                .replace(/[^\w\s]/g, '')
+                .trim();
+        }
+
         function updateCards() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const searchTerm = normalizeString(document.getElementById('searchInput').value);
             const cards = document.getElementsByClassName('card');
+            let visible = 0;
+
             Array.from(cards).forEach(card => {
-                const title = card.querySelector('h2').textContent.toLowerCase();
+                const title = normalizeString(card.querySelector('.card-title').textContent);
                 const cardSector = card.getAttribute('data-sector');
                 const cardIndex = parseInt(card.getAttribute('data-index'));
                 const matchesSearch = title.includes(searchTerm);
                 const matchesSector = selectedSector === '' || cardSector === selectedSector;
                 const matchesFavorites = !showFavorites || favorites.includes(cardIndex);
-                card.style.display = matchesSearch && matchesSector && matchesFavorites ? '' : 'none';
+                const show = matchesSearch && matchesSector && matchesFavorites;
+                card.style.display = show ? '' : 'none';
+                if (show) visible++;
+
                 const star = card.querySelector('.star');
-                if (star) {
-                    star.classList.toggle('favorited', favorites.includes(cardIndex));
-                }
+                if (star) star.classList.toggle('favorited', favorites.includes(cardIndex));
             });
+
+            document.getElementById('filterCount').textContent = visible;
+
+            const list = document.getElementById('spreadsheetList');
+            const existing = list.querySelector('.empty-state');
+            if (existing) existing.remove();
+            if (visible === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'empty-state';
+                empty.innerHTML = `
+                    <svg class="empty-state-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+                    <h3>Nenhum Termo encontrado</h3>
+                    <p>Tente ajustar os filtros ou o termo de busca.</p>
+                `;
+                list.appendChild(empty);
+            }
         }
 
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', updateCards);
+        document.getElementById('searchInput').addEventListener('input', updateCards);
+
+        function setActiveNav(id) {
+            document.getElementById('navAll').classList.remove('active');
+            document.getElementById('navFav').classList.remove('active');
+            document.querySelectorAll('.sidebar-sector-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
         function filterBySector(sector) {
             selectedSector = sector;
             showFavorites = false;
-            document.getElementById('selectedSector').textContent = sector || 'Filtrar por Termo';
             document.getElementById('favoriteFilter').classList.remove('active');
+            if (sector === '') {
+                setActiveNav('navAll');
+            }
             updateCards();
         }
 
         function filterByFavorites() {
             showFavorites = !showFavorites;
             selectedSector = '';
-            document.getElementById('selectedSector').textContent = 'Filtrar por Termo';
-            const favoriteButton = document.getElementById('favoriteFilter');
-            favoriteButton.classList.toggle('active', showFavorites);
+            document.querySelectorAll('.sidebar-sector-item').forEach(b => b.classList.remove('active'));
+            const navFav = document.getElementById('navFav');
+            const favBtn = document.getElementById('favoriteFilter');
+            if (showFavorites) {
+                navFav.classList.add('active');
+                document.getElementById('navAll').classList.remove('active');
+                favBtn.classList.add('active');
+            } else {
+                navFav.classList.remove('active');
+                document.getElementById('navAll').classList.add('active');
+                favBtn.classList.remove('active');
+            }
             updateCards();
         }
 
         let currentDocIndex = null;
-        let currentLinkIndex = null;
+        let currentDocUrl = null;
 
         function extractDocIdFromUrl(url) {
             try {
-                var match = url.match(/\/document\/d\/([^\/#?]+)/);
+                const match = url.match(/\/document\/d\/([^\/#?]+)/);
                 return match ? match[1] : null;
-            } catch (e) {
-                return null;
-            }
+            } catch (e) { return null; }
         }
 
         function buildViewUrl(docId) {
@@ -537,109 +1259,53 @@
             return `https://docs.google.com/document/d/${docId}/edit?rm=embedded`;
         }
 
-        function buildPdfUrl(docId) {
-            return `https://docs.google.com/document/d/${docId}/export?format=docx`;
-        }
-
-        function openDoc(index, linkIndex) {
+        function openDoc(index, specificLink = null) {
             currentDocIndex = index;
-            currentLinkIndex = linkIndex;
             const sheet = spreadsheets[index];
-            const link = sheet.links[linkIndex];
-            const docId = extractDocIdFromUrl(link.link);
+            const docUrl = specificLink || (sheet.links && sheet.links.length > 0 ? sheet.links[0].link : '');
+            currentDocUrl = docUrl;
+            const docId = extractDocIdFromUrl(docUrl);
             const iframe = document.getElementById('docFrame');
-            const titleEl = document.getElementById('docTitle');
-            const downloadBtn = document.getElementById('btnDownloadDocx');
-            titleEl.textContent = link.title || sheet.title || '';
-            if (docId) {
-                iframe.src = buildViewUrl(docId);
-                downloadBtn.style.display = '';
-            } else {
-                iframe.src = link.link;
-                downloadBtn.style.display = 'none';
-            }
+            document.getElementById('docTitle').textContent = sheet.title || '';
+            iframe.src = docId ? buildViewUrl(docId) : docUrl;
             document.getElementById('docOverlay').style.display = 'flex';
         }
 
         function closeDoc() {
-            const overlay = document.getElementById('docOverlay');
-            const iframe = document.getElementById('docFrame');
-            overlay.style.display = 'none';
-            iframe.src = '';
+            document.getElementById('docOverlay').style.display = 'none';
+            document.getElementById('docFrame').src = '';
             currentDocIndex = null;
-            currentLinkIndex = null;
+            currentDocUrl = null;
         }
 
         function switchToEditMode() {
-            if (currentDocIndex == null || currentLinkIndex == null) return;
-            const sheet = spreadsheets[currentDocIndex];
-            const link = sheet.links[currentLinkIndex];
-            const docId = extractDocIdFromUrl(link.link);
-            const iframe = document.getElementById('docFrame');
-            if (docId) {
-                iframe.src = buildEditUrl(docId);
-            } else {
-                iframe.src = link.link;
-            }
+            if (currentDocIndex == null || !currentDocUrl) return;
+            const docId = extractDocIdFromUrl(currentDocUrl);
+            document.getElementById('docFrame').src = docId ? buildEditUrl(docId) : currentDocUrl;
         }
 
-        function downloadDocx() {
-            if (currentDocIndex == null || currentLinkIndex == null) return;
-
+        function downloadDoc() {
+            if (currentDocIndex == null || !currentDocUrl) return;
             const sheet = spreadsheets[currentDocIndex];
-            const link = sheet.links[currentLinkIndex];
-            const docId = extractDocIdFromUrl(link.link);
+            const isViva = sheet && sheet.sector === 'VIVA+';
+            const docId = extractDocIdFromUrl(currentDocUrl);
+            const format = isViva ? 'pdf' : 'docx';
+            const exportUrl = docId
+                ? `https://docs.google.com/document/d/${docId}/export?format=${format}`
+                : currentDocUrl;
+            window.open(exportUrl, '_blank', 'noopener');
+        }
 
-            // Só funciona para documentos do Google Docs/Drive
-            if (!docId) {
-                alert("Download não disponível para este tipo de link.");
-                return;
-            }
-
-            let exportUrl;
-
-            // Regra especial para o setor VIVA+
-            if (sheet.sector === "VIVA+") {
-                // Exporta como PDF
-                exportUrl = `https://docs.google.com/document/d/${docId}/export?format=pdf`;
-            } else {
-                // Exporta como Word (.docx) - comportamento padrão
-                exportUrl = `https://docs.google.com/document/d/${docId}/export?format=docx`;
-            }
-
-            // Cria link temporário e dispara o download
-            const a = document.createElement('a');
-            a.href = exportUrl;
-            a.target = '_blank';
-            a.rel = 'noopener';
-
-            // Opcional: definir nome do arquivo mais amigável
-            const fileName = (link.title || sheet.title || 'documento')
-                .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚçÇ ]/g, '')
-                .trim()
-                .replace(/\s+/g, '_');
-
-            a.download = sheet.sector === "VIVA+" 
-                ? `${fileName}.pdf` 
-                : `${fileName}.docx`;
-
-            document.body.appendChild(a);
-            a.click();
-            a.click();
-            document.body.removeChild(a);
-}
-
-        // Expose handlers globally for inline onclick attributes
         window.openDoc = openDoc;
+        window.closeDoc = closeDoc;
+        window.switchToEditMode = switchToEditMode;
+        window.downloadDoc = downloadDoc;
         window.filterBySector = filterBySector;
         window.filterByFavorites = filterByFavorites;
         window.toggleFavorite = toggleFavorite;
-        window.closeDoc = closeDoc;
-        window.switchToEditMode = switchToEditMode;
-        window.downloadDocx = downloadDocx;
+        window.setActiveNav = setActiveNav;
 
-        // Initialize by fetching data
-        fetchSpreadsheets();
+        loadSpreadsheets();
     </script>
 </body>
 </html>
