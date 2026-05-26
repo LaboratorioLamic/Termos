@@ -703,6 +703,91 @@
         /* ===== SCROLLBAR ===== */
         #sidebar::-webkit-scrollbar { width: 4px; }
         #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+        /* ===== HAMBURGER ===== */
+        #btnMenu {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--text-primary);
+            flex-shrink: 0;
+            transition: background 0.15s;
+        }
+        #btnMenu:hover { background: var(--border); }
+
+        /* ===== SIDEBAR OVERLAY ===== */
+        #sidebarOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 199;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        #sidebarOverlay.visible {
+            display: block;
+        }
+        #sidebarOverlay.active {
+            opacity: 1;
+        }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 768px) {
+            #btnMenu { display: flex; }
+
+            #sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 200;
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+
+            #main-wrapper {
+                margin-left: 0;
+            }
+
+            #topbar {
+                padding: 0 14px;
+                gap: 8px;
+            }
+
+            .topbar-search {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .topbar-badge { display: none; }
+
+            #page-content {
+                padding: 18px 14px 24px;
+            }
+
+            .stats-row {
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 12px 14px;
+            }
+
+            #spreadsheetList {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar-right { gap: 6px; }
+            .btn-fav span { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -714,6 +799,9 @@
             <span class="loading-text">Carregando acervo…</span>
         </div>
     </div>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <!-- Sidebar -->
     <aside id="sidebar">
@@ -731,11 +819,11 @@
             <div class="sidebar-section-label">Navegação</div>
         </div>
         <nav class="sidebar-nav">
-            <button class="sidebar-link active" id="navAll" onclick="filterBySector(''); setActiveNav('navAll')">
+            <button class="sidebar-link active" id="navAll" onclick="filterBySector(''); setActiveNav('navAll'); if(window.innerWidth<=768) closeSidebar()">
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                 Todos os Termos
             </button>
-            <button class="sidebar-link" id="navFav" onclick="filterByFavorites()">
+            <button class="sidebar-link" id="navFav" onclick="filterByFavorites(); if(window.innerWidth<=768) closeSidebar()">
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 Favoritos
             </button>
@@ -754,6 +842,9 @@
 
         <!-- Topbar -->
         <header id="topbar">
+            <button id="btnMenu" onclick="toggleSidebar()" aria-label="Menu">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
             <div class="topbar-search">
                 <svg class="search-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <input type="text" id="searchInput" placeholder="Buscar por título do Termo…">
@@ -971,6 +1062,7 @@
                     btn.classList.add('active');
                     document.getElementById('navAll').classList.remove('active');
                     document.getElementById('navFav').classList.remove('active');
+                    if (window.innerWidth <= 768) closeSidebar();
                 };
                 nav.appendChild(btn);
             });
@@ -1296,6 +1388,26 @@
             window.open(exportUrl, '_blank', 'noopener');
         }
 
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('visible');
+                requestAnimationFrame(() => overlay.classList.add('active'));
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+            overlay.addEventListener('transitionend', () => overlay.classList.remove('visible'), { once: true });
+        }
+
         window.openDoc = openDoc;
         window.closeDoc = closeDoc;
         window.switchToEditMode = switchToEditMode;
@@ -1304,6 +1416,8 @@
         window.filterByFavorites = filterByFavorites;
         window.toggleFavorite = toggleFavorite;
         window.setActiveNav = setActiveNav;
+        window.toggleSidebar = toggleSidebar;
+        window.closeSidebar = closeSidebar;
 
         loadSpreadsheets();
     </script>
